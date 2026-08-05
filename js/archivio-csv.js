@@ -4,7 +4,7 @@
    Struttura CSV:
    nome,link,tipo,categoria
    tipo: testo | spartito
-   categoria: natale | pasqua | altro
+   categoria: natale | pasqua | matrimoni | funerali | altro
    ============================================================ */
 
 async function buildArchivioFromCSV() {
@@ -18,14 +18,19 @@ async function buildArchivioFromCSV() {
     const sezioni = [
       ['grid-t-natale', 'testo',    'natale', false],
       ['grid-t-pasqua', 'testo',    'pasqua', false],
+      ['grid-t-matrimoni', 'testo',    'matrimoni', false],
+      ['grid-t-funerali', 'testo',    'funerali', false],
       ['t-altri',       'testo',    'altro',  true ],
       ['grid-s-natale', 'spartito', 'natale', false],
       ['grid-s-pasqua', 'spartito', 'pasqua', false],
+      ['grid-s-matrimoni', 'spartito',    'matrimoni', false],
+      ['grid-s-funerali', 'spartito',    'funerali', false],
       ['s-altri',       'spartito', 'altro',  true ],
     ];
 
     sezioni.forEach(([id, tipo, categoria, isAZ]) => {
       const subset = files.filter(f => f.tipo === tipo && f.categoria === categoria);
+    
       if (isAZ) {
         renderAlphaGrid(subset, id);
       } else {
@@ -48,19 +53,23 @@ function parseCSV(text) {
     if (!line) continue;
 
     const parts = line.split(',');
-    if (parts.length < 4) continue;
+    if (parts.length !== 4) {
+      console.warn(`Riga non valida: ${line}`);
+      continue;
+    }
 
-    const nome      = parts[0].trim();
-    const categoria = parts[parts.length - 1].trim();
-    const tipo      = parts[parts.length - 2].trim();
-    const link      = parts.slice(1, parts.length - 2).join(',').trim();
+    const nome = parts[0].trim();
+    const link = parts[1].trim();
+    const tipo = parts[2].trim();
+    const categoria = parts[3].trim();
+    
 
     files.push({
-      nome:     formatTitle(nome),
-      link:     link,
-      tipo:     tipo,
-      categoria:categoria,
-      lettera:  formatTitle(nome)[0].toUpperCase()
+      nome: formatTitle(nome),
+      link: link,
+      tipo: tipo,
+      categoria: categoria,
+      lettera: formatTitle(nome)[0].toUpperCase()
     });
   }
 
@@ -79,6 +88,7 @@ function toDriveDownload(link) {
 }
 
 function makeCard(f, isSparto) {
+  
   const a = document.createElement('a');
   a.className = 'file-card';
   a.href      = toDriveDownload(f.link);
@@ -97,16 +107,21 @@ function makeCard(f, isSparto) {
 
 /* ── Lista piatta per Natale / Pasqua (appende al file-grid esistente) ── */
 function renderFlatGrid(files, gridId) {
+  
   const grid = document.getElementById(gridId);
+  
   if (!grid || files.length === 0) return;
 
+
   const isSparto = gridId.startsWith('grid-s-');
+  
   grid.innerHTML = '';
   files.forEach(f => grid.appendChild(makeCard(f, isSparto)));
 }
 
 /* ── Griglia A-Z per Altri (popola il container direttamente) ── */
 function renderAlphaGrid(files, containerId) {
+  
   const container = document.getElementById(containerId);
   if (!container) return;
 

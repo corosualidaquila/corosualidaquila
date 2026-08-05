@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="images/logo.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <script src="https://kit.fontawesome.com/a2a34f3f87.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -64,9 +64,11 @@
         <input type="text" id="searchTesti" placeholder="Cerca un canto…">
       </div>
       <div class="cat-tabs reveal">
-        <button class="cat-tab active" data-cat="t-natale">🎄 Natale</button>
-        <button class="cat-tab" data-cat="t-pasqua">✝️ Pasqua &amp; Triduo</button>
-        <button class="cat-tab" data-cat="t-altri">♪ Altri canti (A–Z)</button>
+        <button class="cat-tab active" data-cat="t-natale">🎄Natale</button>
+        <button class="cat-tab" data-cat="t-pasqua">🕍 Pasqua &amp; Triduo</button>
+        <button class="cat-tab" data-cat="t-matrimoni">💍 Matrimoni</button>
+        <button class="cat-tab" data-cat="t-funerali">✝️ Funerali </button>
+        <button class="cat-tab" data-cat="t-altri">🎶Altri canti (A–Z)</button>
       </div>
 
       <div class="cat-pane active" id="t-natale">
@@ -77,6 +79,17 @@
       <div class="cat-pane" id="t-pasqua">
         <!-- <div class="upload-hint reveal"><i class="fas fa-circle-info"></i> Aggiorna archivio.csv per aggiungere file</div> -->
         <div class="file-grid" id="grid-t-pasqua"></div>
+      </div>
+
+      <div class="cat-pane" id="t-matrimoni">
+        <!-- <div class="upload-hint reveal"><i class="fas fa-circle-info"></i> Aggiorna archivio.csv per aggiungere file</div> -->
+        <div class="file-grid" id="grid-t-matrimoni"></div>
+      </div>
+
+      <div class="cat-pane" id="t-funerali">
+        <!-- <div class="upload-hint reveal"><i class="fas fa-circle-info"></i> Aggiorna archivio.csv per aggiungere file</div> 
+         Aggiungere nuova categoria nel file archivio-csv.js-->
+        <div class="file-grid" id="grid-t-funerali"></div>
       </div>
 
       <div class="cat-pane" id="t-altri">
@@ -92,11 +105,13 @@
         <input type="text" id="searchSpartiti" placeholder="Cerca uno spartito…">
       </div>
       <div class="cat-tabs reveal">
-        <button class="cat-tab active" data-cat="s-natale">🎄 Natale</button>
-        <button class="cat-tab" data-cat="s-pasqua">✝️ Pasqua &amp; Triduo</button>
-        <button class="cat-tab" data-cat="s-altri">♪ Altri canti (A–Z)</button>
+        <button class="cat-tab active" data-cat="s-natale">🎄Natale</button>
+        <button class="cat-tab" data-cat="s-pasqua">🕍 Pasqua &amp; Triduo</button>
+        <button class="cat-tab" data-cat="s-matrimoni">💍 Matrimoni</button>
+        <button class="cat-tab" data-cat="s-funerali">✝️ Funerali </button>
+        <button class="cat-tab" data-cat="s-altri">🎶Altri canti (A–Z)</button>
       </div>
-
+      
       <div class="cat-pane active" id="s-natale">
         <!-- <div class="upload-hint reveal"><i class="fas fa-circle-info"></i> Aggiorna archivio.csv per aggiungere file</div> -->
         <div class="file-grid" id="grid-s-natale"></div>
@@ -105,6 +120,17 @@
       <div class="cat-pane" id="s-pasqua">
         <!-- <div class="upload-hint reveal"><i class="fas fa-circle-info"></i> Aggiorna archivio.csv per aggiungere file</div> -->
         <div class="file-grid" id="grid-s-pasqua"></div>
+      </div>
+
+      <div class="cat-pane" id="s-matrimoni">
+        <!-- <div class="upload-hint reveal"><i class="fas fa-circle-info"></i> Aggiorna archivio.csv per aggiungere file</div> -->
+        <div class="file-grid" id="grid-s-matrimoni"></div>
+      </div>
+
+      <div class="cat-pane" id="s-funerali">
+        <!-- <div class="upload-hint reveal"><i class="fas fa-circle-info"></i> Aggiorna archivio.csv per aggiungere file</div> 
+         Aggiungere nuova categoria nel file archivio-csv.js-->
+        <div class="file-grid" id="grid-s-funerali"></div>
       </div>
 
       <div class="cat-pane" id="s-altri">
@@ -134,5 +160,6 @@
 
 <script src="js/final.js"></script>
 <script src="js/archivio-csv.js"></script>
+
 </body>
 </html>

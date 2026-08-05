@@ -283,11 +283,13 @@ if (archTabs.length) {
   /* Tab principali Testi / Spartiti */
   archTabs.forEach(btn => {
     btn.addEventListener('click', function () {
+      
       archTabs.forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.arch-pane').forEach(p => p.classList.remove('active'));
       this.classList.add('active');
-      document.getElementById('arch-' + this.dataset.arch).classList.add('active');
-      // reset ricerca e ripristina il primo cat-tab attivo
+      const targetPane = document.getElementById('arch-' + this.dataset.arch);
+      
+      targetPane.classList.add('active');
       document.querySelectorAll('.search-bar input').forEach(i => i.value = '');
     });
   });
@@ -295,6 +297,7 @@ if (archTabs.length) {
   /* Sottocategorie — limitato al pannello genitore */
   document.querySelectorAll('.cat-tab').forEach(btn => {
     btn.addEventListener('click', function () {
+      
       const parent = this.closest('.arch-pane');
       parent.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
       parent.querySelectorAll('.cat-pane').forEach(p => {
@@ -303,7 +306,10 @@ if (archTabs.length) {
       });
       this.classList.add('active');
       const target = parent.querySelector('#' + this.dataset.cat);
-      if (target) target.classList.add('active');
+      if (target) {
+        
+        target.classList.add('active');
+      }
     });
   });
 
