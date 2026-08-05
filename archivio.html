@@ -22,6 +22,14 @@
     <li><a href="contacts.html">Contatti</a></li>
   </ul>
   <div class="nav-right">
+    <div id="authContainer">
+      <button id="googleLoginBtn" class="nav-auth-btn">Accedi</button>
+      <div id="userProfile" style="display: none;">
+        <img id="userAvatar" src="" alt="Foto Profilo" class="avatar-img">
+        <span id="userName"></span>
+        <button id="logoutBtn" class="logout-icon" title="Esci"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </div>
     <div class="nav-social">
       <a href="https://www.facebook.com/profile.php?id=100032786907194" target="_blank"><i class="fab fa-facebook-f"></i></a>
       <a href="mailto:c.sualidaquila@gmail.com"><i class="fas fa-envelope"></i></a>
@@ -160,6 +168,76 @@
 
 <script src="js/final.js"></script>
 <script src="js/archivio-csv.js"></script>
+
+
+<script type="module">
+  // Usiamo di nuovo signInWithPopup
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDbGScj9AeXNO8T0PpevPGIS-7pz0JofhA",
+    authDomain: "coro-su-ali-d-aquila.firebaseapp.com",
+    projectId: "coro-su-ali-d-aquila",
+    storageBucket: "coro-su-ali-d-aquila.firebasestorage.app",
+    messagingSenderId: "962438593807",
+    appId: "1:962438593807:web:cf7ed3efd6fdb4b7fe527a",
+    measurementId: "G-BXBT8Q6PD0"
+  };
+
+  // Inizializza Firebase e l'Autenticazione
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // Login con Google tramite Popup (perfetto per lo sviluppo in locale!)
+    // Login intelligente: Popup in locale, Redirect quando il sito è pubblicato!
+    document.getElementById('googleLoginBtn').addEventListener('click', () => {
+    // Controlla se stai testando sul tuo computer
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    if (isLocalhost) {
+      // In locale usiamo il popup (funziona subito senza HTTPS)
+      signInWithPopup(auth, provider)
+        .then(() => console.log("Login locale completato!"))
+        .catch(error => alert('Errore popup: ' + error.message));
+    } else {
+      // Online su Netlify usiamo il redirect (funziona anche a tutto schermo e su smartphone)
+      signInWithRedirect(auth, provider)
+        .catch(error => alert('Errore redirect: ' + error.message));
+    }
+  });
+
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    signOut(auth).then(() => {
+      console.log("Utente disconnesso.");
+    });
+  });
+
+  // Unico e pulito listener dello stato dell'utente
+  onAuthStateChanged(auth, user => {
+    const loginBtn = document.getElementById('googleLoginBtn');
+    const userProfile = document.getElementById('userProfile');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+
+    if (user) {
+      loginBtn.style.display = 'none';
+      userProfile.style.display = 'flex';
+      userName.textContent = user.displayName;
+      userAvatar.src = user.photoURL || 'images/default-avatar.png';
+    } else {
+      loginBtn.style.display = 'block';
+      userProfile.style.display = 'none';
+    }
+  });
+</script>
+
+  
 
 </body>
 </html>

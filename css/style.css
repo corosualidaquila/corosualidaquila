@@ -1815,3 +1815,44 @@ input.prog::-webkit-slider-thumb {
   display: block;
   object-fit: cover;
 }
+/* login */
+#authContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+#userProfile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--bg); 
+}
+#userName {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.nav-auth-btn {
+  background: var(--gold);
+  color: var(--text);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+}
+.logout-icon {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+}
