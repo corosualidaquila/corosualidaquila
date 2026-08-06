@@ -2081,6 +2081,20 @@ input.prog::-webkit-slider-thumb {
   100% { transform: rotate(360deg); }
 }
 
+#modalBackdrop {
+  display: none; /* nascosto di default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.55); /* Sfondo nero semitrasparente */
+  backdrop-filter: blur(4px);      /* Sfoca leggermente lo sfondo del sito */
+  -webkit-backdrop-filter: blur(4px); /* Supporto per Safari */
+  z-index: 9999;                  /* Sotto la modale (10000) ma sopra il sito */
+  cursor: pointer;                /* Indica che si può cliccare per chiudere */
+}
+
 
 
 

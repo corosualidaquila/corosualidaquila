@@ -282,110 +282,125 @@ function fileToBase64(file) {
 document.addEventListener('DOMContentLoaded', () => {
     setupModal();
   });
-  
-  function setupModal() {
+
+function setupModal() {
     const modal = document.getElementById('uploadModal');
+    const backdrop = document.getElementById('modalBackdrop'); // 🌟 Selettore del velo
+    
     if (!modal) {
-      console.warn("⚠️ Modale 'uploadModal' non trovata nell'HTML.");
-      return;
+    console.warn("⚠️ Modale 'uploadModal' non trovata nell'HTML.");
+    return;
     }
-  
+
     const btnCarica = document.getElementById('caricaCantiBtn');
     if (btnCarica) {
-      btnCarica.onclick = () => {
+    btnCarica.onclick = () => {
         modal.style.display = 'block';
-      };
+        if (backdrop) backdrop.style.display = 'block'; // 🌟 Mostra lo sfondo oscurato
+    };
     }
-  
+
+    // Chiusura al clic della X
     const chiudiBtn = document.getElementById('ChiudiBtn');
     if (chiudiBtn) {
-      chiudiBtn.onclick = () => {
+    chiudiBtn.onclick = () => {
         modal.style.display = 'none';
-      };
+        if (backdrop) backdrop.style.display = 'none'; // 🌟 Nasconde lo sfondo oscurato
+    };
     }
-  
+
+    // 🌟 BONUS: Chiude la modale se l'utente clicca fuori (sullo sfondo oscurato)
+    if (backdrop) {
+    backdrop.onclick = () => {
+        modal.style.display = 'none';
+        backdrop.style.display = 'none';
+    };
+    }
+
     const inviaBtn = document.getElementById('InviaBtn');
-    const loadingOverlay = document.getElementById('loadingOverlay'); // Selettore dell'overlay
+    const loadingOverlay = document.getElementById('loadingOverlay');
 
     if (inviaBtn) {
-      inviaBtn.onclick = async () => {
-        // CORRETTO: Tutti gli ID qui sotto corrispondono ora a quelli dell'HTML
+    inviaBtn.onclick = async () => {
         const nomeInput = document.getElementById('Nome');
         const nome = nomeInput.value.trim();
         const tipo = document.getElementById('Tipo').value;
         const categoria = document.getElementById('Categoria').value;
         const fileInput = document.getElementById('File');
         const statusDiv = document.getElementById('testStatus');
-  
+
         if (!nome || !fileInput.files.length) {
-          alert("⚠️ Per favore, inserisci il nome del canto e seleziona un file!");
-          return;
+        alert("⚠️ Per favore, inserisci il nome del canto e seleziona un file!");
+        return;
         }
-  
+
         const file = fileInput.files[0];
 
         if (loadingOverlay) loadingOverlay.style.display = 'flex';
-      
+        
         statusDiv.textContent = "⏳ Conversione del file PDF in corso...";
         statusDiv.style.color = "#007bff";
-  
+
         try {
-          const base64 = await fileToBase64(file);
-          statusDiv.textContent = "🚀 Caricamento su Google Drive in corso...";
-  
-          const response = await fetch(GOOGLE_SCRIPT_URL, {
+        const base64 = await fileToBase64(file);
+        statusDiv.textContent = "🚀 Caricamento su Google Drive in corso...";
+
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             headers: {
-              'Content-Type': 'text/plain;charset=utf-8'
+            'Content-Type': 'text/plain;charset=utf-8'
             },
             body: JSON.stringify({
-              file: base64,
-              mimeType: file.type || "application/pdf",
-              fileName: file.name
+            file: base64,
+            mimeType: file.type || "application/pdf",
+            fileName: file.name
             })
-          });
-  
-          const result = await response.json();
-          if (!result.success) {
+        });
+
+        const result = await response.json();
+        if (!result.success) {
             throw new Error(result.error || "Errore durante il caricamento.");
-          }
-  
-          statusDiv.textContent = "💾 Salvataggio in Firestore...";
-          
-          await addDoc(collection(db, "canti"), {
+        }
+
+        statusDiv.textContent = "💾 Salvataggio in Firestore...";
+        
+        await addDoc(collection(db, "canti"), {
             nome: nome,
             link: result.link,
             tipo: tipo,
             categoria: categoria
-          });
-  
-          statusDiv.textContent = "✅ Completato!";
-          statusDiv.style.color = "#28a745";
-  
-          nomeInput.value = "";
-          fileInput.value = "";
-  
-          buildArchivioFromFirestore();
-  
-          setTimeout(() => {
+        });
+
+        statusDiv.textContent = "✅ Completato!";
+        statusDiv.style.color = "#28a745";
+
+        nomeInput.value = "";
+        fileInput.value = "";
+
+        buildArchivioFromFirestore();
+
+        setTimeout(() => {
             modal.style.display = 'none';
             statusDiv.textContent = "";
-            // 🌟 2. NASCONDIAMO L'OVERLAY A CARICAMENTO COMPLETATO
+            
+            // 🌟 Nascondiamo sia il velo che l'overlay di caricamento
+            if (backdrop) backdrop.style.display = 'none';
             if (loadingOverlay) loadingOverlay.style.display = 'none';
-          }, 2000);
-  
+        }, 2000);
+
         } catch (error) {
-          console.error(error);
-          statusDiv.textContent = "❌ Errore: " + error.message;
-          statusDiv.style.color = "#dc3545";
-            // 🌟 CORREZIONE: Nascondi la schermata bloccante se l'upload fallisce!
-            if (loadingOverlay) {
-                setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-                }, 1500);
-            }
+        console.error(error);
+        statusDiv.textContent = "❌ Errore: " + error.message;
+        statusDiv.style.color = "#dc3545";
+        
+        if (loadingOverlay) {
+            setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+            // Lasciamo visibile il backdrop e la modale così l'utente può riprovare o correggere il form
+            }, 1500);
         }
-      };
+        }
+    };
     }
-  }
-  
+}
+
