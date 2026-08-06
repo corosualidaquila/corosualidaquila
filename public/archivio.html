@@ -7,7 +7,7 @@
   <link rel="icon" href="images/logo.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/a2a34f3f87.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css"></link>
 </head>
 <body>
 
@@ -27,9 +27,12 @@
       <div id="userProfile" style="display: none;">
         <img id="userAvatar" src="" alt="Foto Profilo" class="avatar-img">
         <span id="userName"></span>
+        <!-- IL PULSANTE ORA È QUI, DENTRO L'UNICO PROFILO UTENTE -->
+        <button id="caricaCantiBtn" class="upload-btn">Carica Canti</button>
         <button id="logoutBtn" class="logout-icon" title="Esci"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     </div>
+    
     <div class="nav-social">
       <a href="https://www.facebook.com/profile.php?id=100032786907194" target="_blank"><i class="fab fa-facebook-f"></i></a>
       <a href="mailto:c.sualidaquila@gmail.com"><i class="fas fa-envelope"></i></a>
@@ -64,7 +67,52 @@
         <i class="fas fa-music"></i><span>Spartiti</span>
       </button>
     </div>
+    
 
+    <!-- La tua modale aggiornata con la X -->
+  <div id="uploadModal">
+    <!-- Questa è la X in alto a destra (mantiene l'ID ChiudiBtn così il JS continua a funzionare!) -->
+    <span id="ChiudiBtn" class="close-modal">&times;</span>
+    
+    <h3>Test Caricamento Canto</h3>
+    
+    <label>Nome Canto:</label>
+    <input type="text" id="Nome" placeholder="Es. Tu scendi dalle stelle">
+
+    <label>Tipo:</label>
+    <select id="Tipo">
+      <option value="testo">📄 Testo</option>
+      <option value="spartito">🎼 Spartito</option>
+    </select>
+
+    <label>Categoria:</label>
+    <select id="Categoria">
+      <option value="natale">🎄 Natale</option>
+      <option value="pasqua">🕍 Pasqua & Triduo</option>
+      <option value="matrimoni">💍 Matrimoni</option>
+      <option value="funerali">✝️ Funerali</option>
+      <option value="altro">🎶 Altri Canti (A-Z)</option>
+    </select>
+
+    <label>Seleziona File (PDF):</label>
+    <input type="file" id="File" accept="application/pdf">
+
+    <!-- Lasciamo solo il tasto Carica, ora molto più pulito e largo -->
+    <div class="modal-actions" style="margin-top: 25px;">
+      <button id="InviaBtn" style="width: 100%;">Carica file</button>
+    </div>
+    
+    <div id="testStatus"></div>
+  </div>
+
+  
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <h3 style="margin: 0; font-weight: 500; font-size: 20px;">Caricamento in corso...</h3>
+    <p style="color: #aaa; margin-top: 5px; font-size: 14px;">Attendi il salvataggio, non chiudere la pagina.</p>
+  </div>
+
+    
     <!-- TESTI -->
     <div class="arch-pane active" id="arch-testi">
       <div class="search-bar reveal">
@@ -150,6 +198,8 @@
   </div>
 </section>
 
+
+
 <footer>
   <div class="footer-grid">
     <div class="footer-logo"><a href="index.html"><img src="images/image-12.png" alt="Logo"></a></div>
@@ -167,77 +217,7 @@
 </footer>
 
 <script src="js/final.js"></script>
-<script src="js/archivio-csv.js"></script>
-
-
-<script type="module">
-  // Usiamo di nuovo signInWithPopup
-  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDbGScj9AeXNO8T0PpevPGIS-7pz0JofhA",
-    authDomain: "coro-su-ali-d-aquila.firebaseapp.com",
-    projectId: "coro-su-ali-d-aquila",
-    storageBucket: "coro-su-ali-d-aquila.firebasestorage.app",
-    messagingSenderId: "962438593807",
-    appId: "1:962438593807:web:cf7ed3efd6fdb4b7fe527a",
-    measurementId: "G-BXBT8Q6PD0"
-  };
-
-  // Inizializza Firebase e l'Autenticazione
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-
-  // Login con Google tramite Popup (perfetto per lo sviluppo in locale!)
-    // Login intelligente: Popup in locale, Redirect quando il sito è pubblicato!
-    document.getElementById('googleLoginBtn').addEventListener('click', () => {
-    // Controlla se stai testando sul tuo computer
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-    if (isLocalhost) {
-      // In locale usiamo il popup (funziona subito senza HTTPS)
-      signInWithPopup(auth, provider)
-        .then(() => console.log("Login locale completato!"))
-        .catch(error => alert('Errore popup: ' + error.message));
-    } else {
-      // Online su Netlify usiamo il redirect (funziona anche a tutto schermo e su smartphone)
-      signInWithRedirect(auth, provider)
-        .catch(error => alert('Errore redirect: ' + error.message));
-    }
-  });
-
-
-  // Logout
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    signOut(auth).then(() => {
-      console.log("Utente disconnesso.");
-    });
-  });
-
-  // Unico e pulito listener dello stato dell'utente
-  onAuthStateChanged(auth, user => {
-    const loginBtn = document.getElementById('googleLoginBtn');
-    const userProfile = document.getElementById('userProfile');
-    const userAvatar = document.getElementById('userAvatar');
-    const userName = document.getElementById('userName');
-
-    if (user) {
-      loginBtn.style.display = 'none';
-      userProfile.style.display = 'flex';
-      userName.textContent = user.displayName;
-      userAvatar.src = user.photoURL || 'images/default-avatar.png';
-    } else {
-      loginBtn.style.display = 'block';
-      userProfile.style.display = 'none';
-    }
-  });
-</script>
-
-  
+<script type="module" src="js/firebase.js"></script>
 
 </body>
 </html>
