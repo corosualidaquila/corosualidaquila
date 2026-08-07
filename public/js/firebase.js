@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/fireba
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 // AGGIUNTO: importati doc e deleteDoc per eliminare i dati
-import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc,getDocsFromServer } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAIbW5KtpoRMaUAcYdso5L-tu2K6J_lHTk",
@@ -88,7 +88,9 @@ onAuthStateChanged(auth, user => {
 
 async function buildArchivioFromFirestore() {
   try {
-    const querySnapshot = await getDocs(collection(db, "canti"));
+
+    const querySnapshot = await getDocsFromServer(collection(db, "canti"));
+
     const files = [];
 
     querySnapshot.forEach((doc) => {
@@ -143,10 +145,12 @@ function toDriveDownload(link) {
 }
 
 // AGGIUNTO: Funzione helper per estrarre l'ID del file di Google Drive dal link salvato
-function extractDriveFileId(link) {
-  const match = link.match(/[?&]id=([^&#]+)/) || link.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  return match ? match[1] : null;
-}
+function toDriveDownload(link) {
+    const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/) || link.match(/[?&]id=([^&#]+)/);
+    // Aggiungiamo un timestamp &t= per ingannare la cache del browser
+    return match ? `https://drive.google.com/uc?export=download&id=${match[1]}&t=${new Date().getTime()}` : link;
+  }
+  
 
 function makeCard(f, isSparto) {
   const a = document.createElement('a');
