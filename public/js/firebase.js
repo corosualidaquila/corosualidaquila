@@ -28,19 +28,24 @@ const adminEmail = "c.sualidaquila@gmail.com";
 let isAdmin = false;
 
 // Login
-document.getElementById('googleLoginBtn').addEventListener('click', () => {
-  signInWithPopup(auth, provider)
-    .then(() => console.log("Login completato!"))
-    .catch(error => alert('Errore login: ' + error.message));
-});
+const googleLoginBtn = document.getElementById('googleLoginBtn');
+if (googleLoginBtn) {
+  googleLoginBtn.addEventListener('click', () => {
+    signInWithPopup(auth, provider)
+      .then(() => console.log("Login completato!"))
+      .catch(error => alert('Errore login: ' + error.message));
+  });
+}
 
 // Logout
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  signOut(auth).then(() => {
-    console.log("Utente disconnesso.");
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    signOut(auth).then(() => {
+      console.log("Utente disconnesso.");
+    });
   });
-});
-
+}
 // CARICAMENTO IMMEDIATO: Leggiamo l'archivio per chiunque apra la pagina!
 buildArchivioFromFirestore();
 
@@ -54,7 +59,7 @@ onAuthStateChanged(auth, user => {
 
   if(user) {
     if (user.email === adminEmail) {
-        isAdmin = true; // Impostiamo lo stato ad Admin
+        isAdmin = true; 
         loginBtn.style.display = 'none';
         userProfile.style.display = 'flex';
         userName.textContent = user.displayName;
@@ -68,7 +73,7 @@ onAuthStateChanged(auth, user => {
         alert("⚠️ Accesso negato: l'utente non è autorizzato ad accedere!");
     }
   } else {
-    isAdmin = false; // Non admin
+    isAdmin = false; 
     loginBtn.style.display = 'block';
     userProfile.style.display = 'none';
     if (caricaCantiBtn) caricaCantiBtn.style.display = 'none';
@@ -137,11 +142,6 @@ async function buildArchivioFromFirestore() {
 function formatTitle(raw) {
   const name = raw.replace(/\.pdf$/i, '').trim();
   return name.length > 0 ? name[0].toUpperCase() + name.slice(1).toLowerCase() : name;
-}
-
-function toDriveDownload(link) {
-  const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/) || link.match(/[?&]id=([^&#]+)/);
-  return match ? `https://drive.google.com/uc?export=download&id=${match[1]}` : link;
 }
 
 // AGGIUNTO: Funzione helper per estrarre l'ID del file di Google Drive dal link salvato
