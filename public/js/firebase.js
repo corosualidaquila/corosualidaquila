@@ -146,10 +146,28 @@ function formatTitle(raw) {
 
 // AGGIUNTO: Funzione helper per estrarre l'ID del file di Google Drive dal link salvato
 function toDriveDownload(link) {
-    const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/) || link.match(/[?&]id=([^&#]+)/);
-    // Aggiungiamo un timestamp &t= per ingannare la cache del browser
-    return match ? `https://drive.google.com/uc?export=download&id=${match[1]}&t=${new Date().getTime()}` : link;
+  try {
+    const url = new URL(link);
+    const pathMatch = url.pathname.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const fileId = pathMatch?.[1] || url.searchParams.get('id');
+
+    if (!fileId) return link;
+
+    const downloadUrl = new URL('https://drive.google.com/uc');
+    downloadUrl.searchParams.set('export', 'download');
+    downloadUrl.searchParams.set('id', fileId);
+
+    // Alcuni file condivisi richiedono la resource key inclusa nel link di Drive.
+    const resourceKey = url.searchParams.get('resourcekey');
+    if (resourceKey) downloadUrl.searchParams.set('resourcekey', resourceKey);
+
+    // Evita una risposta in cache.
+    downloadUrl.searchParams.set('t', String(Date.now()));
+    return downloadUrl.toString();
+  } catch {
+    return link;
   }
+}
   
 
 function makeCard(f, isSparto) {
